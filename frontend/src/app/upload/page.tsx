@@ -20,7 +20,7 @@ function FormProduct() {
     return (
     <div>
         <h1 className="font-bold">form submit produk khusus admin</h1>
-        <Form onSubmit={handleSubmit}/>
+        <Form action={handleSubmit}/>
     </div>
     )
 }

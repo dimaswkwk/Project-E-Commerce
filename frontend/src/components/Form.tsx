@@ -2,7 +2,7 @@
 import {useState} from "react";
 import { FormProps } from "../types/types";
 
-export default function Form ({onSubmit}: {onSubmit: (data : FormProps) => void }) {
+export default function Form ({action}: {action: (data : FormProps) => void }) {
     //form itu nilainya dan setform itu untuk mengupdate isi dari form
     const [form, setForm] = useState<FormProps>({ //use state adalah fungsi yang menyimpan data dinamis yang berubah seiring waktu ketika user berinteraksi, singkatnya merubah data
     name:"",
@@ -30,7 +30,7 @@ export default function Form ({onSubmit}: {onSubmit: (data : FormProps) => void 
     };
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(form)
+        action(form)
     }
     return (
         <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-4">

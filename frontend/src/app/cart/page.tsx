@@ -4,12 +4,10 @@ import {CartItems} from "../../types/types";
 import ListCart from "@/src/components/CartListCart";
 import Image from "next/image";
 import {Navbar} from "@/src/components/navbar";
-import {ShoppingBag, Trash2, Plus, Minus, ShoppingBasket} from "lucide-react";
+import {ShoppingBag, Trash2, Plus, Minus, ShoppingBasket, ArrowLeft} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import CardCart from "@/src/components/CardCartSubmit";
-
-
 
 export default function CartPage () {
     const [cartItems, SetCartItems] = useState<CartItems[]>([]);
@@ -54,11 +52,14 @@ export default function CartPage () {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-
-            })
+            }
         })
+        if (response.ok) {
+           console.log('successfully ordered items in cart items')
+            fetchCart()
+        } else {
+            console.log('gagal mengorder barang')
+        }
     }
 
     const handleTrash = async(productId:number) => {
@@ -70,7 +71,7 @@ export default function CartPage () {
                 Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
-                 product_id: productId,
+                product_id: productId
             })
         })
         if (response.ok) {
@@ -140,6 +141,8 @@ export default function CartPage () {
          <Navbar />
             <div className="space-y-4 mx-auto max-w-7xl pt-4">
                 <div className="mb-8">
+
+                 <ArrowLeft className=""/>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Keranjang Belanja</h1>
                 <p className="text-gray-600">{cartItems.length} produk dalam keranjang</p>
             </div>
@@ -159,7 +162,7 @@ export default function CartPage () {
                }
                    header={
                    <div className="flex justify-between items-start">
-                     <h3 className="text-lg font-semibold truncate pr-4">{cartItem.name}</h3>
+                     <h3 className="text-lg font-medium truncate pr-4">{cartItem.name}</h3>
                        <button onClick={() => {
                            handleTrash(cartItem.product_id)
                        }}><Trash2 className="hover:text-red-600 cursor-pointer"/></button>
@@ -178,7 +181,7 @@ export default function CartPage () {
                            </div>
 
                            <div className="text-right space-y-1">
-                               <div className="flex items-center gap-2">
+                               <div className="flex items-center gap-2 bg-gray-200 rounded-lg border">
                                    <button
                                        onClick={() => {
                                            decreaseCart(cartItem.product_id);
@@ -212,8 +215,8 @@ export default function CartPage () {
                <CardCart
                    header={
                        <div className="flex justify-between items-start">
-                           <h3 className="text-lg font-semibold truncate pr-4">Total Barang : </h3>
-                           <p className="font-medium">{cartItems.length}</p>
+                           <h3 className="text-lg font-semibold truncate pr-4">Total Harga :</h3>
+                           <p className="font-bold">Rp {""} {new Intl.NumberFormat("id-ID").format(TotalHarga)}</p>
 
                        </div>
                    }
@@ -224,16 +227,20 @@ export default function CartPage () {
                                {/* Bagian kiri: harga di atas, quantity di bawah */}
                                <div className="flex flex-col">
 
-                                   <span className="font-bold mb-8">Total Harga :</span>
+                                   <span className="font-medium mb-8">Total Barang : </span>
 
                                </div>
 
                                <div className="text-right space-y-1 mb-8">
-                                   <div className="font-semibold">Rp {""} {new Intl.NumberFormat("id-ID").format(TotalHarga)}</div>
+                                   <div className="font-medium">{cartItems.length}</div>
                                </div>
                            </div>
 
-                         <button className="w-4/5 bg-green-500 rounded-xl font-medium px-6 py-4 mx-auto block">
+                         <button className="w-4/5 bg-green-500 rounded-xl text-white font-medium px-6 py-4 mx-auto block hover:bg-green-600 hover:shadow-xl transition-all duration-200"
+                          onClick={() => {
+                              handleSubmit()
+                          }}
+                         >
                              Order Now
                          </button>
 

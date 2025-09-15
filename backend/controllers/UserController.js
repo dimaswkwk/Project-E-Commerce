@@ -9,9 +9,6 @@ const Login = async (req, res) => {
        const result = await client.query(`SELECT * FROM users where email = $1`, [email]);
         const user = result.rows[0];
 
-       console.log("password input: ", password);
-       console.log("password database", user.password)
-       console.log("user: ", user);
         if (!user) {
             res.status(401).json({message : "User not found"})
         }
@@ -59,7 +56,6 @@ const UserMe = async(req,res) => {
     try {
         // ambil id user dari authmiddleware
         const id = req.data.id
-        console.log('id', id)
         // query
         const check = await client.query(`SELECT id,nama,email,role from users where id = $1`, [id])
         if (check.rows.length === 0) {
