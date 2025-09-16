@@ -34,6 +34,7 @@ export default function LoginPage() {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({email, password}),
+                credentials: "include"
             })
             // rubah responnya menjadi json
             const data = await res.json();
@@ -42,7 +43,8 @@ export default function LoginPage() {
             throw new Error(data.message || " login gagal");
             }
             // simpan token/cookies di localstorage
-            localStorage.setItem("access_token", data.access_token);
+            // localStorage.setItem("access_token", data.access_token);
+            console.log(data.message);
             refetchUser();
             // dan langsung diarahin ke product kalau berhasil login
          router.push("/product");

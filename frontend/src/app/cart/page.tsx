@@ -13,17 +13,12 @@ export default function CartPage () {
     const [cartItems, SetCartItems] = useState<CartItems[]>([]);
     const fetchCart = async () => {
         try {
-            const token = localStorage.getItem("access_token")
-            if (!token) {
-                alert("No access token found")
-                window.location.href = '/login'
-            }
             const response = await fetch(`http://localhost:5000/api/cart`, {
                 method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                }
+                    'Content-Type': 'application/json'
+                },
+                credentials: "include"
             })
             // ketika sudah merespon apinya nanti akan muncul datanya
             if (response.ok) {
@@ -33,7 +28,7 @@ export default function CartPage () {
                 console.error("Could not fetch cart data")
                 // kalau unauthorized / token habis
                 if (response.status === 401) {
-                    alert(`Unauthorized`)
+                    alert(`token Unauthorized`)
                     window.location.href = '/login'
                 }
             }
@@ -63,16 +58,15 @@ export default function CartPage () {
     }
 
     const handleTrash = async(productId:number) => {
-        const token = localStorage.getItem("access_token")
         const response = await fetch(`http://localhost:5000/api/cart/delete`, {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
                 product_id: productId
-            })
+            }),
+            credentials: "include"
         })
         if (response.ok) {
             console.log("successfully deleting cart")
@@ -81,40 +75,33 @@ export default function CartPage () {
     }
 
     const increaseCart = async(productId:number) => {
-       const token = localStorage.getItem("access_token")
        const response = await fetch(`http://localhost:5000/api/cart/plus`, {
            method : 'POST',
            headers: {
-               'Content-Type': 'application/json',
-               Authorization: `Bearer ${token}`
+               'Content-Type': 'application/json'
            },
            body: JSON.stringify({
                product_id: productId
-           })
+           }),
+           credentials: "include"
        })
-        console.log("📤 Request product_id:", productId);
-        console.log("📥 Response status:", response.status);
-
-        console.log("response", response.status)
+       console.log("response", response.status)
         if (response.ok) {
-            console.log("📥 Response data:", response);
-            console.log("data: ",cartItems)
             fetchCart()
             SetCartItems(cartItems)
         }
     }
 
     const decreaseCart = async(productId:number) => {
-        const token = localStorage.getItem("access_token")
         const response = await fetch(`http://localhost:5000/api/cart/minus`, {
             method : 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 product_id: productId
-            })
+            }),
+            credentials: "include"
         })
         if (response.ok) {
             fetchCart()
@@ -139,12 +126,15 @@ export default function CartPage () {
     return (
         <div className="flex-1">
          <Navbar />
-            <div className="space-y-4 mx-auto max-w-7xl pt-4">
+            <div className="max-w-8xl mx-auto">
+            <Link href="/product"><ArrowLeft className="mt-4"/></Link>
+            </div>
+            <div className="space-y-4 mx-auto max-w-7xl pt-3">
+
                 <div className="mb-8">
 
-                 <ArrowLeft className=""/>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Keranjang Belanja</h1>
-                <p className="text-gray-600">{cartItems.length} produk dalam keranjang</p>
+                <p className="text-gray-600 ">{cartItems.length} produk dalam keranjang</p>
             </div>
         {cartItems.map((cartItem) => (
                <ListCart

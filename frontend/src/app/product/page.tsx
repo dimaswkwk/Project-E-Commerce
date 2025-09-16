@@ -5,22 +5,19 @@ import {Navbar} from "@/src/components/navbar";
 import Image from "next/image";
 import {products} from '../../types/types'
 import Link from "next/link";
+import CarouselAutoPlay from "@/src/components/Carousel"
 
 export default function Products() {
     const [products, setProducts] = useState<products[]>([]);
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-             const token = localStorage.getItem("access_token");
-             if (!token) {
-                 alert("Token not found!");
-             }
                 const response = await fetch("http://localhost:5000/api/product", {
                     method: "GET",
                     headers : {
-                        "content-type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    }
+                        "content-type": "application/json"
+                    },
+                    credentials:"include"
                 })
 
                 if (response.ok) {
@@ -67,7 +64,14 @@ export default function Products() {
             </CardList>
         </Link>
             )
-                })}
+            })}
+
+                </div>
+                <div className="flex min-h-screen flex-col items-center justify-between p-24">
+                    {/* Tampilkan carousel di sini */}
+                    <div className="w-full max-w-5xl">
+                        <CarouselAutoPlay />
+                    </div>
                 </div>
             </div>
 

@@ -8,7 +8,6 @@ import {Navbar} from "@/src/components/navbar";
 export default function ProductDetail() {
     const params = useParams();
     const slug = Array.isArray(params.slug)? params.slug : params.slug
-    console.log(' nilai slug ',slug);
     // ini use state buat menampilkan product
     const [product, setProduct] = useState<Product | null>(null)
     const [loading, setLoading] = useState(true)
@@ -22,17 +21,13 @@ export default function ProductDetail() {
         setError("")
         const FetchSlug = async()  => {
             try {
-                // ambil token dari localstorage, sebelumnya kan disimpan di localstorage pas login
-                const token = localStorage.getItem("access_token");
-                if (!token) {
-                    alert("token tidak ada")
-                }
                 // fetch api
                 const response = await fetch(`http://localhost:5000/api/product/${slug}`, {
                     method: "GET",
                     headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include"
                 })
                 // ketika sudah ada respon maka nanti akan ditampilkan datanya
                 if (response.ok) {
@@ -58,27 +53,27 @@ export default function ProductDetail() {
     const handleCartAndRedirect = async() => {
         // jika product tidak ada fungsi ini dibatalkan
         if (!product) return
-     const token = localStorage.getItem("access_token")
-        if (!token) {
-         setError("token tidak ada")
-            return;
-        }
         try {
             const res = await fetch(`http://localhost:5000/api/AddCart`,{
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
-                    Authorization : `Bearer ${token}`
                 },
                 // mengambil data dari productnya, yang diambil cuman idnya
                 // dan nanti quantity itu dari jumlah product yang akan daimbil, berarti cuman 1
-                body: JSON.stringify({ id : product.id, quantity: 1 })
+                body: JSON.stringify({ id : product.id, quantity: 1 }),
+                credentials: "include"
             })
             // ketika berhasil arahin ke cart
             if (res.ok) {
                 router.push('/cart')
             } else {
                 console.log('error adding to cart', res.statusText)
+            }
+            if (res.status === 401) {
+                console.log('token expired silahkan login kembali')
+                window.location.href = '/login'
+                return
             }
         } catch (err) {
             const e = err as Error;
