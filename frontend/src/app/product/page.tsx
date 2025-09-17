@@ -41,6 +41,12 @@ export default function Products() {
 
             <div className="flex-1">
             <Navbar />
+                <div className="flex flex-col items-center p-10">
+                    {/* Tampilkan carousel di sini */}
+                    <div className="w-full max-w-5xl">
+                        <CarouselAutoPlay />
+                    </div>
+                </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-1 md:gap-3 px-6 py-4 mx-auto max-w-7xl">
         {products.map((product) => {
             return (
@@ -65,14 +71,8 @@ export default function Products() {
         </Link>
             )
             })}
+                </div>
 
-                </div>
-                <div className="flex min-h-screen flex-col items-center justify-between p-24">
-                    {/* Tampilkan carousel di sini */}
-                    <div className="w-full max-w-5xl">
-                        <CarouselAutoPlay />
-                    </div>
-                </div>
             </div>
 
     )
