@@ -18,9 +18,10 @@ function FormProduct() {
     });
 }
     return (
-    <div>
-        <h1 className="font-bold">form submit produk khusus admin</h1>
+    <div className="flex justify-center min-h-screen">
+        <div className="flex flex-col items-center justify-center w-full">
         <Form action={handleSubmit}/>
+        </div>
     </div>
     )
 }
