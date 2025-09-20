@@ -13,6 +13,16 @@ const storage = multer.diskStorage({
         cb(null, file.originalname);
     }
 });
+
+// storage gambar buat user
+const storageUser = multer.diskStorage({
+    destination: "UploadUser/",
+    filename: (req, file, cb)=> {
+        cb(null, file.originalname);
+    }
+});
+
+const uploadUser = multer({storage: storageUser});
 const upload = multer({storage})
 
 // api product controller
@@ -29,7 +39,7 @@ router.post('/cart/minus', authMiddleware, decreaseQuantity)
 router.post('/order', authMiddleware, GetOrder);
 // api user controller
 router.post('/login', Login)
-router.post('/register',Register)
+router.post('/register', uploadUser.single("image"), Register)
 router.get('/me', authMiddleware, UserMe)
 
 module.exports = router;
