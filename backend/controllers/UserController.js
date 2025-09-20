@@ -37,15 +37,20 @@ const Login = async (req, res) => {
 const Register = async (req,res) => {
 
     const {nama, email, password} = req.body
-
+    const imagePath = req.file ? `/UploadUser/${req.file.filename}` : null;
     try {
         const check = await client.query(`SELECT * FROM users WHERE email = $1 OR nama = $2 `, [email, nama]) // Di Check apakah ada user atau email yang sudah digunakan
        if (check.rows.length > 0) {
            return res.status(400).json({message : " user or email already exists"})
        }
+
        const hashedPassword = await bcrypt.hash(password, 10); // funginya buat meng hash password agar nanti di database tulisan passwordnya encrypted sehingga data aman
-        await client.query(`INSERT INTO users (nama, email, password) VALUES ($1,$2,$3)`,[nama, email, hashedPassword])
-        res.json({message : "registrasi berhasil! silahkan login"})
+        console.log('About to insert:', { nama, email, hashedPassword, imagePath });
+        await client.query(`INSERT INTO users (nama, email, password, image) VALUES ($1,$2,$3,$4)`,[nama, email, hashedPassword, imagePath])
+        res.json({
+            message : "registrasi berhasil! silahkan login"
+
+        })
 
     } catch(err) {
         console.error("register error", err)
@@ -57,7 +62,7 @@ const UserMe = async(req,res) => {
         // ambil id user dari authmiddleware
         const id = req.data.id
         // query
-        const check = await client.query(`SELECT id,nama,email,role from users where id = $1`, [id])
+        const check = await client.query(`SELECT id,nama,email,role,image from users where id = $1`, [id])
         if (check.rows.length === 0) {
             res.status(401).json({message: "user tidak ditemukan"})
         }

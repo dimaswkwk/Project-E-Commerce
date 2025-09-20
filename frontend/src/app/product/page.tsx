@@ -50,7 +50,7 @@ export default function Products() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-1 md:gap-3 px-6 py-4 mx-auto max-w-7xl">
         {products.map((product) => {
             return (
-                <Link href={`/product/${product.slug}`} key={product.id} >
+             <Link href={`/product/${product.slug}`} key={product.id} >
             <CardList
              image = {
             <Image
