@@ -16,6 +16,7 @@ export interface products{
     image?: string | null;
     slug: string;
 }
+
 export interface Product{
     id: number;
     name: string;
@@ -26,19 +27,23 @@ export interface Product{
     store_name: string;
 
 }
+
 export interface usersType {
     id: number;
     nama: string;
     email: string;
     password: string;
     role: 'user' | 'admin';
+    image?: string | null;
 }
+
 export interface UserContextType {
     users: usersType | null;
     loading: boolean;
     setUser: (user: usersType | null) => void;
     refetchUser: () => void;
 }
+
 export interface CartItems {
     id: number;
     product_id: number;
@@ -47,13 +52,12 @@ export interface CartItems {
     name: string;
     price: number;
 }
-export interface LoadingCart {
 
-    loadng: boolean;
-}
-export interface productCart {
-    id: number;
-    name: string;
-    price: number;
-}
+export interface RegisterProps {
+    nama: string;
+    email: string;
+    password: string;
+    image?: File | null;
+    onSubmit: (data: RegisterProps) => void;
 
+}
