@@ -3,37 +3,62 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import {useState} from "react";
+import { useState} from "react";
 import {useRouter} from "next/navigation";
+import {RegisterProps} from "@/src/types/types";
 
 export default function RegisterPage() {
-    const [nama, setNama] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+
+    const [form, setForm] = useState<RegisterProps>({
+        nama:"",
+        email:"",
+        password:"",
+        image:null,
+        onSubmit: ()=> {}
+    })
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
     const router = useRouter();
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {name, value} = e.target;
+       setForm((prev)=> ({ ...prev, [name]:value }))
+    }
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setForm((prev)=> ({
+            ...prev,
+            image: e.target.files?.[0] || null
+        }))
+    }
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+
         setLoading(true)
         setError("")
+
        try {
+            const formData = new FormData()
+           formData.append("nama", form.nama)
+           formData.append("email", form.email)
+           formData.append("password", form.password)
+           if (form.image) formData.append("image", form.image)
+
            const res = await fetch("http://localhost:5000/api/register", {
                method: "POST",
-               headers: {
-                   "Content-Type": "application/json",
-               },
-               body: JSON.stringify({nama,email,password})
+              body: formData
            })
-       const data = await res.json()
+           if (!res.ok) {
+               throw new Error(`HTTP error! status: ${res.status}`);
+           }
+         const data = await res.json()
+           console.log("success data registered",data)
            if (!data) {
-               throw new Error(data.message || " login gagal")
+               throw new Error(data.message || " register gagal")
            }
            router.push("/login")
        } catch(err) {
          const e = err as Error;
-         setError(e.message || " login gagal")
+         setError(e.message || " register gagal")
        } finally {
             setLoading(false)
        }
@@ -51,28 +76,45 @@ export default function RegisterPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
+
                         <div className="flex flex-col gap-6 pt-3">
                             <div className="grid gap-2">
                                 <Label htmlFor="text">Full Name</Label>
                                 <Input
-                                    id="name"
+                                    id="nama"
+                                    name="nama"
                                     type="text"
                                     placeholder="Your Full Name"
-                                    onChange={(e => setNama(e.target.value))}
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>
+                            <div className="flex flex-col gap-6">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="text">Your Image</Label>
+                                    <Input
+                                        id="image"
+                                        name="image"
+                                        type="file"
+                                        accept="image/*"
+                                        placeholder=""
+                                        onChange={handleFileChange}
+                                        required
+                                    />
+                                </div>
                         <div className="flex flex-col gap-6">
                             <div className="grid gap-2">
                                 <Label htmlFor="email">Email</Label>
                                 <Input
                                     id="email"
+                                    name="email"
                                     type="email"
                                     placeholder="m@example.com"
-                                    onChange={(e)=> setEmail(e.target.value)}
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>
+
                             <div className="grid gap-2 pb-4">
                                 <div className="flex items-center">
                                     <Label htmlFor="password">Password</Label>
@@ -85,17 +127,19 @@ export default function RegisterPage() {
                                 </div>
                                 <Input
                                     id="password"
+                                    name="password"
                                     type="password"
                                     placeholder="Password"
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={handleChange}
                                     required />
                             </div>
                         </div>
                        </div>
+                        </div>
                     </CardContent>
                     <CardFooter className="flex-col gap-2">
                         <Button type="submit" className="w-full" disabled={loading}>
-                            {loading ? "Loading...." : "Login"}
+                            {loading ? "Loading...." : "Register"}
                         </Button>
                         <Button  variant="outline" className="w-full">
                             Sign In
